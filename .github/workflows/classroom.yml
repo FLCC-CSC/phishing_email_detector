@@ -1,0 +1,80 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test Case 1 [Meeting on Friday]
+      id: test-case-1-meeting-on-friday
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test Case 1 [Meeting on Friday]
+        setup-command: ''
+        command: python3 phishing_email_detector.py
+        input: Meeting on Friday
+        expected-output: "Enter the email subject line: \nSECURITY ASSESSMENT:\nNo
+          phishing indicators detected.\n------------------------\nAnalyzed subject:
+          \"Meeting on Friday\""
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Test Case 2 [URGENT REQUEST FOR BANK TRANSFER]
+      id: test-case-2-urgent-request-for-bank-transfer
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test Case 2 [URGENT REQUEST FOR BANK TRANSFER]
+        setup-command: ''
+        command: python3 phishing_email_detector.py
+        input: URGENT REQUEST FOR BANK TRANSFER
+        expected-output: "Enter the email subject line: \nSECURITY ASSESSMENT:\nHIGH
+          RISK: Possible phishing attempt.\n------------------------\nAnalyzed subject:
+          \"URGENT REQUEST FOR BANK TRANSFER\""
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Test Case 3 [All I do is win win win no matter what]
+      id: test-case-3-all-i-do-is-win-win-win-no-matter-what
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test Case 3 [All I do is win win win no matter what]
+        setup-command: ''
+        command: python3 phishing_email_detector.py
+        input: All I do is win win win no matter what
+        expected-output: "Enter the email subject line: \nSECURITY ASSESSMENT:\nMEDIUM
+          RISK: Suspicious offer detected.\n------------------------\nAnalyzed subject:
+          \"All I do is win win win no matter what\""
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Test Case 4 [Did you request a password reset?]
+      id: test-case-4-did-you-request-a-password-reset
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Test Case 4 [Did you request a password reset?]
+        setup-command: ''
+        command: python3 phishing_email_detector.py
+        input: Did you request a password reset?
+        expected-output: "Enter the email subject line: \nSECURITY ASSESSMENT:\nLOW
+          RISK: Verify legitimacy with sender.\n------------------------\nAnalyzed
+          subject: \"Did you request a password reset?\""
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST-CASE-1-MEETING-ON-FRIDAY_RESULTS: "${{steps.test-case-1-meeting-on-friday.outputs.result}}"
+        TEST-CASE-2-URGENT-REQUEST-FOR-BANK-TRANSFER_RESULTS: "${{steps.test-case-2-urgent-request-for-bank-transfer.outputs.result}}"
+        TEST-CASE-3-ALL-I-DO-IS-WIN-WIN-WIN-NO-MATTER-WHAT_RESULTS: "${{steps.test-case-3-all-i-do-is-win-win-win-no-matter-what.outputs.result}}"
+        TEST-CASE-4-DID-YOU-REQUEST-A-PASSWORD-RESET_RESULTS: "${{steps.test-case-4-did-you-request-a-password-reset.outputs.result}}"
+      with:
+        runners: test-case-1-meeting-on-friday,test-case-2-urgent-request-for-bank-transfer,test-case-3-all-i-do-is-win-win-win-no-matter-what,test-case-4-did-you-request-a-password-reset
